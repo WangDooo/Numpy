@@ -90,13 +90,77 @@ import numpy as np
 
 
 # <---------分隔数组----------------------------------------------->
-a = np.arange(9).reshape(3,3)
-b = np.hsplit(a, 3) # hsplit 把数组沿水平方向分割为3个相同大小的子数组
-print(b)
-c = np.split(a, 3, axis = 1)
-print(c)
 
-b = np.vsplit(a ,3)	# vsplit 把数组沿垂直方向分割为3个相同大小的子数组
-print(b)
-c = np.split(a, 3, axis = 0)
-print(c)
+# a = np.arange(9).reshape(3,3)
+# b = np.hsplit(a, 3) # hsplit 把数组沿水平方向分割为3个相同大小的子数组
+# print(b)
+# c = np.split(a, 3, axis = 1)
+# print(c)
+
+# b = np.vsplit(a ,3)	# vsplit 把数组沿垂直方向分割为3个相同大小的子数组
+# print(b)
+# c = np.split(a, 3, axis = 0)
+# print(c)
+
+# <---------数组的属性----------------------------------------------->
+
+# b = np.arange(24).reshape(2,12)
+# print(b)
+
+# print(b.ndim) # ndim 数组维数
+
+# print(b.size) # size 数组元素总个数
+
+# print(b.itemsize) # itemsize 数组中元素在内存中所占的字节数
+
+# print(b.nbytes) # nbytes 整个数组所占的存储空间
+
+# print(b.size * b.itemsize)
+
+# b.resize(6,4)
+# print(b)
+
+# print(b.T) # T = transpose 转置		对于一维数组，T就是原数组
+
+# b = np.array([1.j + 1, 2.j + 3]) # 复数的虚部用j表示
+# print(b)
+
+# print(b.real) # real 给出复数数组的实部
+
+# print(b.imag) # imag 给出复数数组的虚部
+
+# print(b.dtype) # 如果数组中包含复数元素，其数据类型自动变为复数型
+# print(b.dtype.str)
+
+# b = np.arange(4).reshape(2,2)
+# print(b)
+# f = b.flat # flat 返回一个numpy.flatiter对象
+# print(f)
+# for item in f:
+# 	print(item)
+# print(b.flat[2]) # 用flatiter对象直接获取一个数组元素
+
+# b.flat = 7 # flat属性是一个可赋值的属性，赋值将会导致整个数组的元素都被覆盖
+# print(b)
+
+# b.flat[[1,3]] = 1 # 赋值多个元素 1 3 位置
+# print(b)
+
+# <---------数组的转换----------------------------------------------->
+
+# b = np.array([1.j + 1, 2.j + 3])
+# print(b.tolist()) # tolist() 将Numpy数组转换为Python列表
+
+# print(b.astype(int)) # astype() 转换数组时指定数据类型 int会丢失去虚数部分，会有警告信息
+# print(b.astype('complex')) 
+
+
+# <--------------------------------------------------------------------->
+# <-----------第3章- 常用函数------------------------------------------->
+# <--------------------------------------------------------------------->
+
+# <-----------读写文件------------------------------------------->
+
+i2 = np.eye(2)
+print(i2)
+np.savetxt("eye.txt", i2)
