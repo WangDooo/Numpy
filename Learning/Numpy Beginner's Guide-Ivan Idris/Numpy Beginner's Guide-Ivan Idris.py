@@ -159,8 +159,28 @@ import numpy as np
 # <-----------第3章- 常用函数------------------------------------------->
 # <--------------------------------------------------------------------->
 
-# <-----------读写文件------------------------------------------->
+# <-----------读写文件txt------------------------------------------->
 
-i2 = np.eye(2)
-print(i2)
-np.savetxt("eye.txt", i2)
+# i2 = np.eye(2)
+# print(i2)
+# np.savetxt("eye.txt", i2) # savetxt()
+
+# <-----------读入CSV文件------------------------------------------->
+
+# loadtxt() 读取csv文件 自动切分字段 并将数据载入Numpy数组
+c, v = np.loadtxt('data.csv', delimiter=',', usecols=(6,7) , unpack=True) 
+# delimiter 分隔符 
+# usecols	参数是一个元组，获取第7字段至第8字段数据 即收盘价和交易量
+# unpack = True 分拆存储不同列的数据，即将收盘价和交易量赋值给c和v
+
+# VWAP Volume-Weighted Average Price 成交量加权平均价格 以成交量为权重算出来的加权平均值
+
+vwap = np.average(c, weights=v) # 将v作为权重参数使用
+print("VWAP =", vwap)
+
+print("mean =", np.mean(c)) # mean() 算术平均值
+
+# TWAP Time-Weighted Average Price 时间加权平均价格 基本思想：最近的价格重要性大一些，近期价格有较高权重
+
+t = np.arange(len(c))
+print("TWAP =", np.average(c, weights=t))
