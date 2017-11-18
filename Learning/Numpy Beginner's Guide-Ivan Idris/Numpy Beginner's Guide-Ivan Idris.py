@@ -168,19 +168,46 @@ import numpy as np
 # <-----------读入CSV文件------------------------------------------->
 
 # loadtxt() 读取csv文件 自动切分字段 并将数据载入Numpy数组
-c, v = np.loadtxt('data.csv', delimiter=',', usecols=(6,7) , unpack=True) 
+# c, v = np.loadtxt('data.csv', delimiter=',', usecols=(6,7) , unpack=True) 
 # delimiter 分隔符 
 # usecols	参数是一个元组，获取第7字段至第8字段数据 即收盘价和交易量
 # unpack = True 分拆存储不同列的数据，即将收盘价和交易量赋值给c和v
 
 # VWAP Volume-Weighted Average Price 成交量加权平均价格 以成交量为权重算出来的加权平均值
 
-vwap = np.average(c, weights=v) # 将v作为权重参数使用
-print("VWAP =", vwap)
+# vwap = np.average(c, weights=v) # 将v作为权重参数使用
+# print("VWAP =", vwap)
 
-print("mean =", np.mean(c)) # mean() 算术平均值
+# print("mean =", np.mean(c)) # mean() 算术平均值
 
 # TWAP Time-Weighted Average Price 时间加权平均价格 基本思想：最近的价格重要性大一些，近期价格有较高权重
 
-t = np.arange(len(c))
-print("TWAP =", np.average(c, weights=t))
+# t = np.arange(len(c))
+# print("TWAP =", np.average(c, weights=t))
+
+# h, l = np.loadtxt('data.csv', delimiter=',', usecols=(4,5), unpack=True)
+# print("Highest =", np.max(h))
+# print("Lowest =", np.min(l))
+# print("区间中点 = ", (np.max(h) + np.min(l)) / 2)
+
+# print("Spread high price =", np.ptp(h)) # ptp() 计算数组的取值范围 = max(array)-min(array)
+# print("Spread Low price =", np.ptp(l))
+
+
+c = np.loadtxt('data.csv', delimiter=',', usecols=(6,), unpack=True)
+# print("Median =", np.median(c)) # median() 中位数
+
+# sorted_c = np.msort(c)
+# print("sorted =", sorted_c)
+# N = len(c)
+# if N % 2 == 0:
+# 	print("average middle =",(sorted_c[int(N/2)] + sorted_c[int(N/2) - 1]) /2)
+# else:
+# 	print("average middle =",(sorted_c[int((N-1))/2]))
+
+# print("variance =", np.var(c)) # var() 方差 各个数据与所有数据算术平均数的差的平方和除以数据个数
+
+# print("variance from definition =", np.mean((c - c.mean())**2)) # c.mean() ndarray对象有mean方法
+
+returns = np.diff(c) / c[ :-1] # diff() 返回一个由相邻数组元素的差值构成的数组 比原数组会少一个元素
+print("Standard deviation =", np.std(returns)) # std() 计算标准差
