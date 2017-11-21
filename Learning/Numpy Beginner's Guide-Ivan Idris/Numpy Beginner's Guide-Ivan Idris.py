@@ -1,4 +1,6 @@
 import numpy as np
+from datetime import datetime
+
 
 # m = np.array([np.arange(2),np.arange(2)])
 # print(m)
@@ -193,8 +195,9 @@ import numpy as np
 # print("Spread high price =", np.ptp(h)) # ptp() 计算数组的取值范围 = max(array)-min(array)
 # print("Spread Low price =", np.ptp(l))
 
+# <-----------股票收益率分析----------------------------------------->
 
-c = np.loadtxt('data.csv', delimiter=',', usecols=(6,), unpack=True)
+# c = np.loadtxt('data.csv', delimiter=',', usecols=(6,), unpack=True)
 # print("Median =", np.median(c)) # median() 中位数
 
 # sorted_c = np.msort(c)
@@ -209,5 +212,43 @@ c = np.loadtxt('data.csv', delimiter=',', usecols=(6,), unpack=True)
 
 # print("variance from definition =", np.mean((c - c.mean())**2)) # c.mean() ndarray对象有mean方法
 
-returns = np.diff(c) / c[ :-1] # diff() 返回一个由相邻数组元素的差值构成的数组 比原数组会少一个元素
-print("Standard deviation =", np.std(returns)) # std() 计算标准差
+# returns = np.diff(c) / c[ :-1] # diff() 返回一个由相邻数组元素的差值构成的数组 比原数组会少一个元素
+# print("returns_diff(c) =", returns)
+# print("Standard deviation =", np.std(returns)) # std() 计算标准差
+
+# logreturns = np.diff(np.log(c)) # log() 取对数 一般情况要检查数组中 不含有零和负数
+
+# posretindices = np.where(returns > 0) # where() 根据指定条件返回所有满足条件的数组元素索引值
+# print("Indices with positive returns", posretindices)
+
+# 波动率 volatility 历史波动率根据历史价格计算得到，历史波动率需要用到对数收益率。
+# 年波动率 = 对数收益率的标准差除以其均值，再除以交易日倒数的平方根，通常交易日取252天
+
+# annul_volatility = np.std(logreturns) / np.mean(logreturns)
+# annul_volatility = annul_volatility / np.sqrt(1./252.) # 数字后面有个'.'
+# print("Annual volatility", annul_volatility)
+
+# print("Monthly volatility", annul_volatility * np.sqrt(1./12.))
+
+# <-----------日期分析----------------------------------------->
+
+def datestr2num(s):
+	return datetime.strptime(s.decode('ascii'), "%d-%m-%Y").date().weekday()
+	# 编译器在打开data.csv文件时，将表格里的第2列数组值提取出来返回给dates，第二列值是日期格式字符串，但因为我们是以二进制编码的格式打开第二列值是，返回的值字节字符串bytes，所以需要把它便会string，则对字符串解码用函数decode('asii')，变成string格式。
+
+dates, close = np.loadtxt('data.csv', delimiter=',', usecols=(1,6), converters={1:datestr2num}, unpack=True)
+print("Dates =", dates) # converters参数 数据列和转换函数之间进行映射
+
+averages = np.zeros(5)
+for i in range(5):
+	indices = np.where(dates == i)
+	prices = np.take(close, indices) # take() 按照where的索引值获取对应的元素
+	avg = np.mean(prices)
+	print("Day", i, "prices", prices, "Average", avg)
+	averages[i] = avg
+
+top = np.max(averages)
+print("Highest average =", top, "Top day of the week is", np.argmax(averages)) # argmax() 返回数组中最大元素的索引值
+bottom = np.min(averages)
+print("Lowest average =", bottom, "Bottom day of the week is", np.argmin(averages))
+
