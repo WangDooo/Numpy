@@ -1,4 +1,5 @@
 import numpy as np
+import sys
 from datetime import datetime
 
 
@@ -232,9 +233,15 @@ from datetime import datetime
 
 # <-----------日期分析----------------------------------------->
 
+<<<<<<< HEAD
 # def datestr2num(s):
 # 	return datetime.strptime(s.decode('ascii'), "%d-%m-%Y").date().weekday()
 # 	# 编译器在打开data.csv文件时，将表格里的第2列数组值提取出来返回给dates，第二列值是日期格式字符串，但因为我们是以二进制编码的格式打开第二列值是，返回的值字节字符串bytes，所以需要把它便会string，则对字符串解码用函数decode('asii')，变成string格式。
+=======
+def datestr2num(s):
+	return datetime.strptime(s.decode('ascii'), "%d-%m-%Y").date().weekday()
+	# 编译器在打开data.csv文件时，将表格里的第2列数组值提取出来返回给dates，第二列值是日期格式字符串，但因为我们是以二进制编码的格式打开第二列值是，返回的值字节字符串bytes，所以需要把它便会string，则对字符串解码用函数decode('asii')，变成string格式。
+>>>>>>> d0a685bb86a26f1cf8f1c9ad515b16822be2cc30
 
 # dates, close = np.loadtxt('data.csv', delimiter=',', usecols=(1,6), converters={1:datestr2num}, unpack=True)
 # print("Dates =", dates) # converters参数 数据列和转换函数之间进行映射
@@ -252,3 +259,97 @@ from datetime import datetime
 # bottom = np.min(averages)
 # print("Lowest average =", bottom, "Bottom day of the week is", np.argmin(averages))
 
+# <-----------周汇总---------------------------------------->
+
+# dates, open, high, low, close = np.loadtxt('data.csv', delimiter=',', usecols=(1,3,4,5,6), converters={1:datestr2num}, unpack=True)
+
+# close = close[:16]
+# dates = dates[:16]
+
+# first_monday = np.ravel(np.where(dates == 0))[0] # where() 返回的是一个多维数组 用ravel函数将其展平
+# print("The first Monday index is", first_monday)
+
+# last_friday = np.ravel(np.where(dates == 4))[-1]
+# print("The last Firday index is", last_friday)
+
+# weeks_indices = np.arange(first_monday, last_friday+1)
+# print("Week indices initial", weeks_indices)
+
+# weeks_indices = np.split(weeks_indices, 3) # split() 分割数组 分成3个组
+# print("Weeks indices after split", weeks_indices)
+
+# def summarize(a, o, h, l, c):
+# 	monday_open = o[a[0]]
+# 	week_high = np.max(np.take(h, a))
+# 	week_low = np.min(np.take(l, a))
+# 	friday_close = c[a[-1]]
+
+# 	return("APPL", monday_open, week_high, week_low, friday_close)
+
+# weeksummary = np.apply_along_axis(summarize, 1, weeks_indices, open, high, low, close)
+# # apply_along_axis() 提供我们自定义的函数名summarize, 指定要作用的轴或维度的编号, summarize函数的参数(第一个为目标数组)
+# print("Week summary", weeksummary)
+
+# np.savetxt("weeksummary.csv", weeksummary, delimiter=',', fmt="%s") # savetxt() 存储 指定了 文件名\保存数组名\分隔符\存储格式
+# # 存储格式 fmt="%?" ?: -左对齐 0左端补0 +输出符号 c单个字符 d十进制有符号整数 u十进制无符号 s字符串 f浮点数 e科学计数法 o八进制有符号整数 x十六进制无符号整数
+
+# <-----------真实波动浮动均值ATR---------------------------------------->
+
+# h, l, c = np.loadtxt('data.csv', delimiter=',', usecols=(4,5,6), unpack=True)
+
+# N = 20
+# h = h[-N:]
+# l = l[-N:]
+
+# print("len(h) =", len(h), "len(l) =", len(l))
+
+# previousclose = c[-N-1: -1]
+# print("len(previousclose)", len(previousclose))
+# print("Previous close", previousclose)
+
+# truerange = np.maximum(h - l, h - previousclose, previousclose - l) # maximum() 在几个数组之间，挑选每个元素位置上的最大值
+# print("True range", truerange)
+
+# atr = np.zeros(N)
+# atr[0] = np.mean(truerange)
+# for i in range(1, N):
+# 	atr[i] = (N - 1) * atr[i -1] + truerange[i]
+# 	atr[i] /= N
+
+# print("ATR", atr)
+
+# <-----------简单移动平均线---------------------------------------->
+
+from matplotlib.pyplot import plot
+from matplotlib.pyplot import show
+
+# N = 5
+
+# weights = np.ones(N) / N
+# print("Weights", weights)
+# c = np.loadtxt('data.csv', delimiter=',', usecols=(6,), unpack=True)
+
+# sma = np.convolve(weights, c)[N-1: -N+1] # convolve() 计算一数组与指定权重的卷积
+# t = np.arange(N - 1, len(c))
+# plot(t, c[N-1:], lw=1.0)
+# plot(t, sma, lw=2.0)
+# show()
+
+# <-----------指数移动平均线---------------------------------------->
+
+x = np.arange(5)
+print("Exp", np.exp(x))
+print("Linspace", np.linspace(-1, 0, 5)) # linspace() 起始值，终止值，元数个数， 返回一个元素值在指定范围内均匀分布的数组
+
+N = 5
+
+weights = np.exp(np.linspace(-1, 0, N))
+weights /= weights.sum() # 对权重进行归一化，用ndarray对象的sum()方法
+print("Weights", weights)
+
+c = np.loadtxt('data.csv', delimiter=',', usecols=(6,), unpack=True)
+ema = np.convolve(weights, c)[N-1: -N+1] # convolve() 计算一数组与指定权重的卷积
+t = np.arange(N - 1, len(c))
+plot(t, c[N-1:], lw=1.0)
+plot(t, ema, lw=2.0)
+show()
