@@ -232,23 +232,23 @@ from datetime import datetime
 
 # <-----------日期分析----------------------------------------->
 
-def datestr2num(s):
-	return datetime.strptime(s.decode('ascii'), "%d-%m-%Y").date().weekday()
-	# 编译器在打开data.csv文件时，将表格里的第2列数组值提取出来返回给dates，第二列值是日期格式字符串，但因为我们是以二进制编码的格式打开第二列值是，返回的值字节字符串bytes，所以需要把它便会string，则对字符串解码用函数decode('asii')，变成string格式。
+# def datestr2num(s):
+# 	return datetime.strptime(s.decode('ascii'), "%d-%m-%Y").date().weekday()
+# 	# 编译器在打开data.csv文件时，将表格里的第2列数组值提取出来返回给dates，第二列值是日期格式字符串，但因为我们是以二进制编码的格式打开第二列值是，返回的值字节字符串bytes，所以需要把它便会string，则对字符串解码用函数decode('asii')，变成string格式。
 
-dates, close = np.loadtxt('data.csv', delimiter=',', usecols=(1,6), converters={1:datestr2num}, unpack=True)
-print("Dates =", dates) # converters参数 数据列和转换函数之间进行映射
+# dates, close = np.loadtxt('data.csv', delimiter=',', usecols=(1,6), converters={1:datestr2num}, unpack=True)
+# print("Dates =", dates) # converters参数 数据列和转换函数之间进行映射
 
-averages = np.zeros(5)
-for i in range(5):
-	indices = np.where(dates == i)
-	prices = np.take(close, indices) # take() 按照where的索引值获取对应的元素
-	avg = np.mean(prices)
-	print("Day", i, "prices", prices, "Average", avg)
-	averages[i] = avg
+# averages = np.zeros(5)
+# for i in range(5):
+# 	indices = np.where(dates == i)
+# 	prices = np.take(close, indices) # take() 按照where的索引值获取对应的元素
+# 	avg = np.mean(prices)
+# 	print("Day", i, "prices", prices, "Average", avg)
+# 	averages[i] = avg
 
-top = np.max(averages)
-print("Highest average =", top, "Top day of the week is", np.argmax(averages)) # argmax() 返回数组中最大元素的索引值
-bottom = np.min(averages)
-print("Lowest average =", bottom, "Bottom day of the week is", np.argmin(averages))
+# top = np.max(averages)
+# print("Highest average =", top, "Top day of the week is", np.argmax(averages)) # argmax() 返回数组中最大元素的索引值
+# bottom = np.min(averages)
+# print("Lowest average =", bottom, "Bottom day of the week is", np.argmin(averages))
 
